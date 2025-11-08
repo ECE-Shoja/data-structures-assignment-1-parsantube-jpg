@@ -1,42 +1,58 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
 using namespace std;
 
-vector<int> parent, sz;
-
-int findSet(int v) {
-    // TODO: implement path compression
-}
-
-void unionSet(int a, int b) {
-    // TODO: implement union by size/rank
-}
-
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-
-    int n, q;
-    cin >> n >> q;
-
-    parent.resize(n + 1);
-    sz.resize(n + 1, 1);
-
-    for (int i = 1; i <= n; i++) {
-        parent[i] = i;
+class UnionFind {
+private:
+    vector<int> parent;
+    vector<int> rank;
+public:
+    explicit UnionFind(const int array_size) {
+        parent.resize(array_size);
+        rank.resize(array_size, 0);
+        for (int i = 0; i < array_size; i++) parent[i] = i;
+    }
+    int find(const int x) {
+        if (x != parent[x]) parent[x] = find(parent[x]);
+        return parent[x];
     }
 
-    while (q--) {
-        char type;
-        int a, b;
-        cin >> type >> a >> b;
+    void union_function(const int x, const int y) {
+        const int root_x = find(x);
+        const int root_y = find(y);
+        if (root_x == root_y) return;
 
-        if (type == '+') {
-            unionSet(a, b);
-        } else if (type == '?') {
-            if (findSet(a) == findSet(b)) cout << "YES\n";
-            else cout << "NO\n";
+        if (rank[root_x] < rank[root_y]) parent[root_x] = root_y;
+        else if (rank[root_x] > rank[root_y]) parent[root_y] = root_x;
+        else {
+            parent[root_y] = root_x;
+            rank[root_x]++;
         }
     }
+    bool root(const int x, const int y) {
+        return find(x) == find(y);
+    }
+};
 
+int main() {
+    int n, m;
+    cin >> n >> m;
+    UnionFind a1(n);
+    vector<string> state;
+    string line;
+    int x, y;
+    while (m--) {
+        cin >> line >> x >> y;
+        x--;
+        y--;
+        if (line == "+") {
+            a1.union_function(x, y);
+        } else if (line == "?") {
+            state.emplace_back(a1.root(x, y) ? "YES" : "NO");
+        }
+    }
+    for (const auto& i : state) {
+        cout<<i<<endl;
+    }
     return 0;
 }
