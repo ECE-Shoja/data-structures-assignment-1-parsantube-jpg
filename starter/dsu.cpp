@@ -4,7 +4,7 @@ using namespace std;
 vector<int> parent, sz;
 
 int findSet(int v) {
-     if (v != parent[x]) parent[v] = findSet(parent[v]);
+     if (v != parent[v]) parent[v] = findSet(parent[v]);
         return parent[v];
 }
 
